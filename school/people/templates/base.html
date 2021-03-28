@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
+
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+    </head>
+<body>
+    <div class="col-md-3"></div>
+    <div class="col-md-6 well">
+
+        <hr style="border-top:1px dotted #000;"/>
+        {% block body %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<label> {{student.firstname}}</label>
+<form method="POST">
+    {% csrf_token %}
+    <div class="col-md-2">
+         <a href="/">Signup</a>
+    </div>
+    <div class="col-md-8">
+        <div class="form-group">
+            <label for="firstname">Öğrencinin Adı:</label>
+            <input type="text" value="{{student.firstname}}" name="firstname" class="form-control" required="required"/>
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="lastname">Öğrencinin Soyadı:</label>
+            <input type="text" value="{{student.lastname}}" name="lastname" class="form-control" required="required"/>
+        </div>
+        <br />
+        <div class="form-group">
+            <label for="email">Öğrencinin Email:</label>
+            <input type="text" value="{{student.email}}" name="email" class="form-control" required="required"/>
+        </div>
+        <br />
+        <br />
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary form-control"><span class="glyphicon glyphicon-save"></span> Submit</button>
+        </div>
+    </div>
+</form>
+</body>
+</html>
