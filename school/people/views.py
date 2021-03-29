@@ -8,6 +8,8 @@ from people.models import Manager #models.py
 from django.shortcuts import get_object_or_404, render
 # Create your views here.
 def index(request):
+    return render(request, 'index.html')
+def addSchool(request):
     if request.method == 'POST':
         school1 = School(name=request.POST['name1'], city=request.POST['city1'])
         school1.save()
@@ -28,11 +30,11 @@ def index(request):
             sinif4.save()
         return redirect('/register')
     else:
-        return render(request, 'index.html')
+        return render(request, 'addSchool.html')
 
 def register(request):
-    schools = School.objects.all().order_by("name")
-    classes = Class.objects.all().order_by("name")
+    schools = School.objects.all()
+    classes = Class.objects.all()
     if request.method == 'POST':
         if request.POST['type']=="student":
             member = Student(firstname=request.POST['firstname'], lastname=request.POST['lastname'],  email=request.POST['email'],  password=request.POST['password'], class_id=request.POST['class'])
@@ -61,12 +63,12 @@ def login(request):
             if student.email==email and student.password==password:
                 print(student.email)
                 class_id=student.class_id
-                classes = Class.objects.all().order_by("name")
+                classes = Class.objects.all()
                 for classTmp in classes:
                     if classTmp.id==class_id:
                         classObject=classTmp
 
-                teachers = Teacher.objects.all().order_by("firstname")
+                teachers = Teacher.objects.all()
                 selectedTeacher="Atanmadı"
                 for teacher in teachers:
                     if teacher.class_id==class_id:
@@ -75,26 +77,43 @@ def login(request):
         for teacher in teachers:
             if teacher.email==email and teacher.password==password:
                 class_id=teacher.class_id
-                classes = Class.objects.all().order_by("name")
+                classes = Class.objects.all()
                 for classTmp in classes:
                     if classTmp.id==class_id:
                         classObject=classTmp
-                students = Student.objects.all().order_by("firstname")
+                students = Student.objects.all()
                 studentObjects=[]
                 for student in students:
                     if student.class_id==class_id:
                         print(student.firstname)
                         studentObjects.append(student)
-                return render(request,'teacher.html',{"teacher":teacher,"classObject":classObject,"studentObjects":studentObjects})
+                classes = Class.objects.all()
+                classObjects=[]
+                for clas in classes:
+                    if clas.id==class_id:
+                        classObjects.append(clas)
+                return render(request,'teacher.html',{"teacher":teacher,"classObject":classObject,"studentObjects":studentObjects,"classObjects":classObjects})
         for manager in managers:
             if manager.email==email and manager.password==password:
                 okul_id = manager.okul_id
-                schools = School.objects.all().order_by("name")
-                schoolObjects=[]
-                for school in schools:
-                    if school.id==okul_id:
-                        schoolObjects.append(school)
-                return render(request,'manager.html',{"manager":manager,"schoolObjects":schoolObjects})
+                school = School.objects.get(id=okul_id)
+                classes = Class.objects.all()
+                classObjects=[]
+                for clas in classes:
+                    if clas.okul_id==okul_id:
+                        classObjects.append(clas)
+                teachers = Teacher.objects.all()
+                for i in range(len(classObjects)):
+                    print(classObjects[i].id)
+                teacherObjects=[]
+                for teacher in teachers:
+                    for clas in classObjects:
+                        print(clas.id,teacher.class_id)
+                        if clas.id==teacher.class_id:
+                            teacherObjects.append(teacher)
+                            break
+
+                return render(request,'manager.html',{"manager":manager,"teacherObjects":teacherObjects})
         return redirect('/login')
 
 
@@ -104,7 +123,7 @@ def student(request):
     return render(request, 'student.html')
 def update(request,id):
     student=Student.objects.get(id=id)
-    classes = Class.objects.all().order_by("name")
+    classes = Class.objects.all()
 
     for classTmp in classes:
         if classTmp.id==student.class_id:
@@ -115,16 +134,16 @@ def update(request,id):
         lastname = request.POST['lastname']
         email = request.POST['email']
         Student.objects.filter(id=student.id).update(firstname=firstname,lastname=lastname,email=email)
-        teachers = Teacher.objects.all().order_by("firstname")
+        teachers = Teacher.objects.all()
         for teacher in teachers:
             if teacher.class_id==student.class_id:
                 selectedTeacher=teacher
         class_id = selectedTeacher.class_id
-        classes = Class.objects.all().order_by("name")
+        classes = Class.objects.all()
         for classTmp in classes:
             if classTmp.id == class_id:
                 classObject = classTmp
-        students = Student.objects.all().order_by("firstname")
+        students = Student.objects.all()
         studentObjects = []
         for student in students:
             if student.class_id == class_id:
@@ -137,16 +156,16 @@ def update(request,id):
 def delete(request,id):
     student=Student.objects.get(id=id)
     Student.objects.filter(id=id).delete()
-    teachers = Teacher.objects.all().order_by("firstname")
+    teachers = Teacher.objects.all()
     for teacher in teachers:
         if teacher.class_id == student.class_id:
             selectedTeacher = teacher
     class_id = selectedTeacher.class_id
-    classes = Class.objects.all().order_by("name")
+    classes = Class.objects.all()
     for classTmp in classes:
         if classTmp.id == class_id:
             classObject = classTmp
-    students = Student.objects.all().order_by("firstname")
+    students = Student.objects.all()
     studentObjects = []
     for student in students:
         if student.class_id == class_id:
@@ -155,6 +174,7 @@ def delete(request,id):
     return render(request,'teacher.html',{"teacher":selectedTeacher,"classObject":classObject,"studentObjects":studentObjects})
 
 def manager(request):
-    return render(request, 'manager.html')
+    teachers = Teacher.objects.all().order_by("firstname")
+    return render(request, 'manager.html', {"teacher": teachers})
 def teacher(request):
     return render(request, 'teacher.html')
