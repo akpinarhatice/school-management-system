@@ -34,32 +34,37 @@
   <!-- Navbar content -->
 </nav>
 
-    <label>Hoşgeldin CINIM {{manager.firstname}} {{manager.lastname}}</label>
+    <label>Hoşgeldin {{manager.firstname}} {{manager.lastname}},</label>
     <br />
     <table class="table">
 
   <thead>
     <tr>
       <th scope="col">#</th>
-        <th scope="col">Okul Adı:</th>
-      <th scope="col">Şehir:</th>
-      <th scope="col">Öğretmen:</th>
+        <th scope="col">Öğretmen Adı:</th>
+      <th scope="col">Öğretmen Soyadı:</th>
+      <th scope="col">Öğretmen Email:</th>
 
     </tr>
   </thead>
   <tbody>
-  {% for school in schoolObjects %}
+  {% for teacher in teacherObjects  %}
+
     <tr>
       <th scope="row">1</th>
 
-        <th scope="col">{{school.name}}</th>
-        <th scope="col">{{school.city}}</th>
-        <th scope="col"><button type="button" href="/update" class="btn btn-success">Update</button></th>
-        <th scope="col"><button type="button" class="btn btn-danger">Delete</button></th>
+        <th scope="col">{{teacher.firstname}}</th>
+        <th scope="col">{{teacher.lastname}}</th>
+        <th scope="col">{{teacher.email}}</th>
+
 
 
     </tr>
+
   {% endfor %}
+
+
+
   </tbody>
 </table>
 </body>
